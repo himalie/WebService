@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="InventModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="InventoryPart">
+    <Key>
+      <PropertyRef Name="part_no" />
+    </Key>
+    <Property Name="part_no" Type="String" MaxLength="20" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="description" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+    <NavigationProperty Name="InvPartInStocks" Relationship="Self.FK_InvPartInStock_InventoryPart" FromRole="InventoryPart" ToRole="InvPartInStock" />
+  </EntityType>
+  <EntityType Name="InvPartInStock">
+    <Key>
+      <PropertyRef Name="serial_no" />
+      <PropertyRef Name="part_no" />
+    </Key>
+    <Property Name="serial_no" Type="String" MaxLength="20" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="part_no" Type="String" MaxLength="20" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="quantity" Type="Decimal" Precision="18" Scale="0" />
+    <Property Name="expiry_date" Type="DateTime" Precision="0" />
+    <Property Name="manuf_date" Type="DateTime" Precision="0" />
+    <Property Name="stock_in_date" Type="DateTime" Precision="0" />
+    <NavigationProperty Name="InventoryPart" Relationship="Self.FK_InvPartInStock_InventoryPart" FromRole="InvPartInStock" ToRole="InventoryPart" />
+  </EntityType>
+  <EntityType Name="sysdiagram">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <Association Name="FK_InvPartInStock_InventoryPart">
+    <End Role="InventoryPart" Type="Self.InventoryPart" Multiplicity="1" />
+    <End Role="InvPartInStock" Type="Self.InvPartInStock" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="InventoryPart">
+        <PropertyRef Name="part_no" />
+      </Principal>
+      <Dependent Role="InvPartInStock">
+        <PropertyRef Name="part_no" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="InventEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="InventoryParts" EntityType="Self.InventoryPart" />
+    <EntitySet Name="InvPartInStocks" EntityType="Self.InvPartInStock" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+    <AssociationSet Name="FK_InvPartInStock_InventoryPart" Association="Self.FK_InvPartInStock_InventoryPart">
+      <End Role="InventoryPart" EntitySet="InventoryParts" />
+      <End Role="InvPartInStock" EntitySet="InvPartInStocks" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
